@@ -1564,7 +1564,8 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 	edict_t	*other;
 	int		i, j;
 	pmove_t	pm;
-
+	vec3_t zero = {0,0,0};
+	
 	level.current_entity = ent;
 	client = ent->client;
 
@@ -1732,6 +1733,18 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 		if (other->inuse && other->client->chase_target == ent)
 			UpdateChaseCam(other);
 	}
+	if (level.time == 10)
+	{
+		gi.centerprintf(ent,"ZOMBIES SPAWNED");
+	}
+	
+	/*poison mod
+	if (ent->poison_level > 0)
+	{
+		T_Damage (ent, ent->poisoner, ent->poisoner, zero, ent->s.origin, zero, ent-, int knockback, int dflags, int mod)
+
+	}
+	*/
 }
 
 

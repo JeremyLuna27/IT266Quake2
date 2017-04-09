@@ -224,6 +224,16 @@ spawn_t	spawns[] = {
 	{"monster_soldier_light", SP_monster_soldier_light},
 	{"monster_soldier", SP_monster_soldier},
 	{"monster_soldier_ss", SP_monster_soldier_ss},
+	//------------------------------------------------------------------
+	//{"monster_infantry2", SP_monster_infantry},
+	//{"monster_soldier_light2", SP_monster_soldier_light},
+	//{"monster_soldier2", SP_monster_soldier},
+	//{"monster_soldier_ss2", SP_monster_soldier_ss},
+	//{"monster_infantry3", SP_monster_infantry},
+	//{"monster_soldier_light3", SP_monster_soldier_light},
+	//{"monster_soldier3", SP_monster_soldier},
+	//{"monster_soldier_ss3", SP_monster_soldier_ss},
+	//------------------------------------------------------------------
 	{"monster_tank", SP_monster_tank},
 	{"monster_tank_commander", SP_monster_tank},
 	{"monster_medic", SP_monster_medic},
@@ -498,6 +508,12 @@ Creates a server's entity / program execution context by
 parsing textual entity definitions out of an ent file.
 ==============
 */
+
+//set pointer to g_spawn
+//edict_t *multiSpawn;
+//create pointer to entity. assign it to what gspawn sends back. set its name using the entity you already have. call on the spawn function for it, set its spawn. 
+
+
 void SpawnEntities (char *mapname, char *entities, char *spawnpoint)
 {
 	edict_t		*ent;
@@ -505,6 +521,8 @@ void SpawnEntities (char *mapname, char *entities, char *spawnpoint)
 	char		*com_token;
 	int			i;
 	float		skill_level;
+
+	//edict_t *multiSpawnEnt;
 
 	skill_level = floor (skill->value);
 	if (skill_level < 0)
@@ -579,8 +597,12 @@ void SpawnEntities (char *mapname, char *entities, char *spawnpoint)
 
 			ent->spawnflags &= ~(SPAWNFLAG_NOT_EASY|SPAWNFLAG_NOT_MEDIUM|SPAWNFLAG_NOT_HARD|SPAWNFLAG_NOT_COOP|SPAWNFLAG_NOT_DEATHMATCH);
 		}
-
 		ED_CallSpawn (ent);
+
+		//multiSpawnEnt->classname = ent->classname;
+		//multiSpawnEnt = G_Spawn ();
+		//ED_CallSpawn(multiSpawnEnt);
+		
 	}	
 
 	gi.dprintf ("%i entities inhibited\n", inhibit);
@@ -600,6 +622,13 @@ void SpawnEntities (char *mapname, char *entities, char *spawnpoint)
 	PlayerTrail_Init ();
 }
 
+//edict_t *multiSpawnEnt;
+//multiSpawnEnt = G_Spawn ();
+
+//ED_CallSpawn(multiSpawnEnt);
+//create pointer to entity. assign it to what gspawn sends back. set its name using the entity you already have. call on the spawn function for it, set its spawn. 
+
+//loop thru the edicts list and check if nothing in use then go to next wave
 
 //===================================================================
 

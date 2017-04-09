@@ -533,6 +533,7 @@ void weapon_grenade_fire (edict_t *ent, qboolean held)
 	float	timer;
 	int		speed;
 	float	radius;
+	int skips;
 
 	radius = damage+40;
 	if (is_quad)
@@ -544,7 +545,8 @@ void weapon_grenade_fire (edict_t *ent, qboolean held)
 
 	timer = ent->client->grenade_time - level.time;
 	speed = GRENADE_MINSPEED + (GRENADE_TIMER - timer) * ((GRENADE_MAXSPEED - GRENADE_MINSPEED) / GRENADE_TIMER);
-	fire_grenade2 (ent, start, forward, damage, speed, timer, radius, held);
+	skips = 0;
+	fire_grenade3 (ent, start, forward, damage, speed, 0.55, radius, held,skips);
 
 	if (! ( (int)dmflags->value & DF_INFINITE_AMMO ) )
 		ent->client->pers.inventory[ent->client->ammo_index]--;
@@ -746,8 +748,8 @@ void Weapon_RocketLauncher_Fire (edict_t *ent)
 	int		radius_damage;
 
 	damage = 100 + (int)(random() * 20.0);
-	radius_damage = 120;
-	damage_radius = 120;
+	radius_damage = 30;
+	damage_radius = 700;
 	if (is_quad)
 	{
 		damage *= 4;
@@ -759,7 +761,24 @@ void Weapon_RocketLauncher_Fire (edict_t *ent)
 	VectorScale (forward, -2, ent->client->kick_origin);
 	ent->client->kick_angles[0] = -1;
 
-	VectorSet(offset, 8, 8, ent->viewheight-8);
+	//VectorSet(offset, 8, 8, ent->viewheight-8);
+	VectorSet(offset, 0,0,0);
+	P_ProjectSource (ent->client, ent->s.origin, offset, forward, right, start);
+	fire_rocket (ent, start, forward, damage, 650, damage_radius, radius_damage);
+
+	VectorSet(offset, -25,-25,0);
+	P_ProjectSource (ent->client, ent->s.origin, offset, forward, right, start);
+	fire_rocket (ent, start, forward, damage, 650, damage_radius, radius_damage);
+
+	VectorSet(offset, 25,25,0);
+	P_ProjectSource (ent->client, ent->s.origin, offset, forward, right, start);
+	fire_rocket (ent, start, forward, damage, 650, damage_radius, radius_damage);
+
+	VectorSet(offset, 0,0,25);
+	P_ProjectSource (ent->client, ent->s.origin, offset, forward, right, start);
+	fire_rocket (ent, start, forward, damage, 650, damage_radius, radius_damage);
+
+	VectorSet(offset, 0,0,-25);
 	P_ProjectSource (ent->client, ent->s.origin, offset, forward, right, start);
 	fire_rocket (ent, start, forward, damage, 650, damage_radius, radius_damage);
 
@@ -810,7 +829,46 @@ void Blaster_Fire (edict_t *ent, vec3_t g_offset, int damage, qboolean hyper, in
 	VectorScale (forward, -2, ent->client->kick_origin);
 	ent->client->kick_angles[0] = -1;
 
+	//if (hyper)
+	//{
+		//bounce_fire_blaster (ent, start, forward, damage, 1000, effect, hyper);
+		//gi.dprintf("hyper shot");
+	//}
+	//else
+	//{
 	fire_blaster (ent, start, forward, damage, 1000, effect, hyper);
+	//	gi.dprintf("regular shot");
+	//}
+	// send muzzle flash
+	gi.WriteByte (svc_muzzleflash);
+	gi.WriteShort (ent-g_edicts);
+	if (hyper)
+		gi.WriteByte (MZ_HYPERBLASTER | is_silenced);
+	else
+		gi.WriteByte (MZ_BLASTER | is_silenced);
+	gi.multicast (ent->s.origin, MULTICAST_PVS);
+
+	PlayerNoise(ent, start, PNOISE_WEAPON);
+}
+
+void hyper_Blaster_Fire (edict_t *ent, vec3_t g_offset, int damage, qboolean hyper, int effect)
+{
+	vec3_t	forward, right;
+	vec3_t	start;
+	vec3_t	offset;
+
+	if (is_quad)
+		damage *= 4;
+	AngleVectors (ent->client->v_angle, forward, right, NULL);
+	VectorSet(offset, 24, 8, ent->viewheight-8);
+	VectorAdd (offset, g_offset, offset);
+	P_ProjectSource (ent->client, ent->s.origin, offset, forward, right, start);
+
+	VectorScale (forward, -2, ent->client->kick_origin);
+	ent->client->kick_angles[0] = -1;
+
+	//gi.dprintf("hyper shot");
+	bounce_fire_blaster (ent, start, forward, damage, 1000, effect, hyper);
 
 	// send muzzle flash
 	gi.WriteByte (svc_muzzleflash);
@@ -824,17 +882,69 @@ void Blaster_Fire (edict_t *ent, vec3_t g_offset, int damage, qboolean hyper, in
 	PlayerNoise(ent, start, PNOISE_WEAPON);
 }
 
+void hyper_Blaster_FireMachine (edict_t *ent, vec3_t g_offset, int damage, qboolean hyper, int effect)
+{
+	vec3_t	forward, right;
+	vec3_t	start;
+	vec3_t	offset;
+
+	if (is_quad)
+		damage *= 4;
+	AngleVectors (ent->client->v_angle, forward, right, NULL);
+	VectorSet(offset, 24, 8, ent->viewheight-8);
+	VectorAdd (offset, g_offset, offset);
+	P_ProjectSource (ent->client, ent->s.origin, offset, forward, right, start);
+
+	VectorScale (forward, -2, ent->client->kick_origin);
+	ent->client->kick_angles[0] = -1;
+
+	//gi.dprintf("hyper shot");
+	fire_blaster (ent, start, forward, 1000, 1000, effect, hyper);
+
+	// send muzzle flash
+	gi.WriteByte (svc_muzzleflash);
+	gi.WriteShort (ent-g_edicts);
+	if (hyper)
+		gi.WriteByte (MZ_HYPERBLASTER | is_silenced);
+	else
+		gi.WriteByte (MZ_BLASTER | is_silenced);
+	gi.multicast (ent->s.origin, MULTICAST_PVS);
+
+	PlayerNoise(ent, start, PNOISE_WEAPON);
+}
 
 void Weapon_Blaster_Fire (edict_t *ent)
 {
 	int		damage;
+	vec3_t extraVec;
 
 	if (deathmatch->value)
 		damage = 15;
 	else
 		damage = 10;
 	Blaster_Fire (ent, vec3_origin, damage, false, EF_BLASTER);
+
+	/*VectorSet(extraVec, 0, 8, 0);
+	VectorAdd(extraVec, vec3_origin, extraVec);
+	Blaster_Fire (ent, extraVec, damage, false, EF_BLASTER);
+
+	VectorSet(extraVec, 0, -8, 0);
+	VectorAdd(extraVec, vec3_origin, extraVec);
+	Blaster_Fire (ent, extraVec, damage, false, EF_BLASTER);
+
+	VectorSet(extraVec, 0, 0, 8);
+	VectorAdd(extraVec, vec3_origin, extraVec);
+	Blaster_Fire (ent, extraVec, damage, false, EF_BLASTER);
+	
+	VectorSet(extraVec, 0, 0, -8);
+	VectorAdd(extraVec, vec3_origin, extraVec);
+	Blaster_Fire (ent, extraVec, damage, false, EF_BLASTER);*/
+
+	//VectorCopy(ent->s.old_origin,ent->owner->s.origin);
+	//VectorCopy (self->s.origin, self->s.old_origin);
 	ent->client->ps.gunframe++;
+
+
 }
 
 void Weapon_Blaster (edict_t *ent)
@@ -842,7 +952,9 @@ void Weapon_Blaster (edict_t *ent)
 	static int	pause_frames[]	= {19, 32, 0};
 	static int	fire_frames[]	= {5, 0};
 
-	Weapon_Generic (ent, 4, 8, 52, 55, pause_frames, fire_frames, Weapon_Blaster_Fire);
+	//Weapon_Generic (ent, 4, 8, 52, 55, pause_frames, fire_frames, Weapon_Blaster_Fire);
+	//Increases fire rate
+	Weapon_Generic (ent, 4, 5, 52, 55, pause_frames, fire_frames, Weapon_Blaster_Fire);
 }
 
 
@@ -885,7 +997,7 @@ void Weapon_HyperBlaster_Fire (edict_t *ent)
 				damage = 15;
 			else
 				damage = 20;
-			Blaster_Fire (ent, offset, damage, true, effect);
+			hyper_Blaster_Fire (ent, offset, damage, true, effect);
 			if (! ( (int)dmflags->value & DF_INFINITE_AMMO ) )
 				ent->client->pers.inventory[ent->client->ammo_index]--;
 
@@ -922,7 +1034,74 @@ void Weapon_HyperBlaster (edict_t *ent)
 
 	Weapon_Generic (ent, 5, 20, 49, 53, pause_frames, fire_frames, Weapon_HyperBlaster_Fire);
 }
+void Weapon_HyperBlaster_FireMachine (edict_t *ent)
+{
+	float	rotation;
+	vec3_t	offset;
+	int		effect;
+	int		damage;
 
+	ent->client->weapon_sound = gi.soundindex("weapons/hyprbl1a.wav");
+
+	if (!(ent->client->buttons & BUTTON_ATTACK))
+	{
+		//ent->client->ps.gunframe++;
+	}
+	else
+	{
+		if (! ent->client->pers.inventory[ent->client->ammo_index] )
+		{
+			if (level.time >= ent->pain_debounce_time)
+			{
+				gi.sound(ent, CHAN_VOICE, gi.soundindex("weapons/noammo.wav"), 1, ATTN_NORM, 0);
+				ent->pain_debounce_time = level.time + 1;
+			}
+			NoAmmoWeaponChange (ent);
+		}
+		else
+		{
+			rotation = (ent->client->ps.gunframe - 5) * 2*M_PI/6;
+			offset[0] = -4 * sin(rotation);
+			offset[1] = 0;
+			offset[2] = 4 * cos(rotation);
+
+			if ((ent->client->ps.gunframe == 6) || (ent->client->ps.gunframe == 9))
+				effect = EF_HYPERBLASTER;
+			else
+				effect = 0;
+			if (deathmatch->value)
+				damage = 15;
+			else
+				damage = 20;
+			hyper_Blaster_FireMachine (ent, offset, damage, true, effect);
+			if (! ( (int)dmflags->value & DF_INFINITE_AMMO ) )
+				ent->client->pers.inventory[ent->client->ammo_index]--;
+
+			ent->client->anim_priority = ANIM_ATTACK;
+			if (ent->client->ps.pmove.pm_flags & PMF_DUCKED)
+			{
+				ent->s.frame = FRAME_crattak1 - 1;
+				ent->client->anim_end = FRAME_crattak9;
+			}
+			else
+			{
+				ent->s.frame = FRAME_attack1 - 1;
+				ent->client->anim_end = FRAME_attack8;
+			}
+		}
+
+		ent->client->ps.gunframe++;
+		if (ent->client->ps.gunframe == 12 && ent->client->pers.inventory[ent->client->ammo_index])
+			ent->client->ps.gunframe = 6;
+	}
+
+	if (ent->client->ps.gunframe == 12)
+	{
+		gi.sound(ent, CHAN_AUTO, gi.soundindex("weapons/hyprbd1a.wav"), 1, ATTN_NORM, 0);
+		ent->client->weapon_sound = 0;
+	}
+
+}
 /*
 ======================================================================
 
@@ -1019,10 +1198,20 @@ void Machinegun_Fire (edict_t *ent)
 
 void Weapon_Machinegun (edict_t *ent)
 {
-	static int	pause_frames[]	= {23, 45, 0};
+	/*static int	pause_frames[]	= {23, 45, 0};
 	static int	fire_frames[]	= {4, 5, 0};
 
-	Weapon_Generic (ent, 3, 5, 45, 49, pause_frames, fire_frames, Machinegun_Fire);
+	Weapon_Generic (ent, 3, 5, 10, 49, pause_frames, fire_frames, Machinegun_Fire);*/
+
+	static int	pause_frames[]	= {22, 28, 34, 0};
+	static int	fire_frames[]	= {8, 9, 0};
+
+	Weapon_Generic (ent, 3, 7, 38, 39, pause_frames, fire_frames, Machinegun_Fire);
+	
+
+	/*static int	pause_frames[]	= {19, 32, 0};
+	static int	fire_frames[]	= {5, 0};
+	Weapon_Generic (ent, 4, 8, 52, 55, pause_frames, fire_frames, Weapon_HyperBlaster_FireMachine);*/
 }
 
 void Chaingun_Fire (edict_t *ent)
@@ -1325,6 +1514,9 @@ void weapon_railgun_fire (edict_t *ent)
 
 	if (! ( (int)dmflags->value & DF_INFINITE_AMMO ) )
 		ent->client->pers.inventory[ent->client->ammo_index]--;
+	//TELEPORT WORKS
+	//CHECK
+	teleport_fire_blaster (ent, start, forward, damage, 1000, 0,false);
 }
 
 
@@ -1351,7 +1543,7 @@ void weapon_bfg_fire (edict_t *ent)
 	vec3_t	forward, right;
 	int		damage;
 	float	damage_radius = 1000;
-
+	
 	if (deathmatch->value)
 		damage = 200;
 	else
@@ -1390,11 +1582,11 @@ void weapon_bfg_fire (edict_t *ent)
 	ent->client->v_dmg_pitch = -40;
 	ent->client->v_dmg_roll = crandom()*8;
 	ent->client->v_dmg_time = level.time + DAMAGE_TIME;
-
+	
 	VectorSet(offset, 8, 8, ent->viewheight-8);
 	P_ProjectSource (ent->client, ent->s.origin, offset, forward, right, start);
-	fire_bfg (ent, start, forward, damage, 400, damage_radius);
-
+	fire_bfg (ent, start, offset, damage, 400, damage_radius);
+	//bfg_explode (ent);
 	ent->client->ps.gunframe++;
 
 	PlayerNoise(ent, start, PNOISE_WEAPON);
