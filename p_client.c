@@ -2,7 +2,7 @@
 #include "m_player.h"
 
 void ClientUserinfoChanged (edict_t *ent, char *userinfo);
-
+void ApplyThrust (edict_t *ent);
 void SP_misc_teleporter_dest (edict_t *ent);
 
 //
@@ -385,6 +385,45 @@ void ClientObituary (edict_t *self, edict_t *inflictor, edict_t *attacker)
 		self->client->resp.score--;
 }
 
+void ApplyThrust (edict_t *ent)
+{
+
+	vec3_t forward, right;
+	vec3_t pack_pos, jet_vector;
+
+	//MUCE:  add thrust to character
+
+	if (ent->velocity[2] < -500)
+		ent->velocity[2]+=((ent->velocity[2])/(-5));
+	else if (ent->velocity[2] < 0)
+		ent->velocity[2] += 100; 
+	else
+		ent->velocity[2]+=((200-ent->velocity[2])/8);
+
+	//MUCE:  add sparks
+
+	AngleVectors(ent->client->v_angle, forward, right, NULL);
+	VectorScale (forward, -7, pack_pos);
+	VectorAdd (pack_pos, ent->s.origin, pack_pos);
+	pack_pos[2] += (ent->viewheight);
+
+	VectorScale (forward, -50, jet_vector);
+
+	gi.WriteByte (svc_temp_entity);
+	gi.WriteByte (TE_SPARKS);
+	gi.WritePosition (pack_pos);
+	gi.WriteDir (jet_vector);
+	gi.multicast (pack_pos, MULTICAST_PVS);
+
+	//MUCE: add sound 
+
+	if (ent->client->next_thrust_sound < level.time)
+	{
+		gi.sound (ent, CHAN_BODY, gi.soundindex("weapons/rockfly.wav"), 1, ATTN_NORM, 0);
+		ent->client->next_thrust_sound=level.time+1.0;
+	}
+}
+
 
 void Touch_Item (edict_t *ent, edict_t *other, cplane_t *plane, csurface_t *surf);
 
@@ -597,8 +636,8 @@ void InitClientPersistant (gclient_t *client)
 
 	client->pers.weapon = item;
 
-	client->pers.health			= 100;
-	client->pers.max_health		= 100;
+	client->pers.health			= 999;
+	client->pers.max_health		= 1000;
 
 	client->pers.max_bullets	= 200;
 	client->pers.max_shells		= 100;
@@ -606,6 +645,8 @@ void InitClientPersistant (gclient_t *client)
 	client->pers.max_grenades	= 50;
 	client->pers.max_cells		= 200;
 	client->pers.max_slugs		= 50;
+	client->pers.fire_mode		= 0;
+	client->pers.speed			= 0;
 
 	client->pers.connected = true;
 }
@@ -1558,6 +1599,7 @@ This will be called once for each client frame, which will
 usually be a couple times for each server frame.
 ==============
 */
+
 void ClientThink (edict_t *ent, usercmd_t *ucmd)
 {
 	gclient_t	*client;
@@ -1565,9 +1607,89 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 	int		i, j;
 	pmove_t	pm;
 	vec3_t zero = {0,0,0};
+	//------------------------------ SPEED MOD
+	float t;
+	float ClassSpeedModifer;
+	vec3_t velo;
+	vec3_t  end, forward, right, up,add;
+	
+	if (!ent->client->pers.speed)
+		ent->ClassSpeed = 5;
+	else // if (ent->client->pers.speed=0)
+		ent->ClassSpeed = 10;
+	//ent->ClassSpeed = 10;
+
+	ClassSpeedModifer = ent->ClassSpeed * 0.2;
+	//Figure out speed
+	VectorClear (velo);
+	AngleVectors (ent->client->v_angle, forward, right, up);
+
+	VectorScale(forward, ucmd->forwardmove*ClassSpeedModifer, end);
+	VectorAdd(end,velo,velo);
+	AngleVectors (ent->client->v_angle, forward, right, up);
+    VectorScale(right, ucmd->sidemove*ClassSpeedModifer, end);
+	VectorAdd(end,velo,velo);
+
+	//if not in water set it up so they aren't moving up or down when they press forward
+	if (ent->waterlevel == 0)
+		velo[2] = 0;
+	if (ent->waterlevel==1)//feet are in the water
+	{
+		//Water slows you down or at least I think it should
+		velo[0] *= 0.875;
+		velo[1] *= 0.875;
+		velo[2] *= 0.875;
+		ClassSpeedModifer *= 0.875;
+	}
+	else if (ent->waterlevel==2)//waist is in the water
+	{
+		//Water slows you down or at least I think it should
+		velo[0] *= 0.75;
+		velo[1] *= 0.75;
+		velo[2] *= 0.75;
+		ClassSpeedModifer *= 0.75;
+	}
+	else if (ent->waterlevel==3)//whole body is in the water
+	{
+		//Water slows you down or at least I think it should
+		velo[0] *= 0.6;
+		velo[1] *= 0.6;
+		velo[2] *= 0.6;
+		ClassSpeedModifer *= 0.6;
+	}
+	if (ent->groundentity)//add 
+		VectorAdd(velo,ent->velocity,ent->velocity);
+	else if (ent->waterlevel)
+		VectorAdd(velo,ent->velocity,ent->velocity);
+	else
+	{
+		//Allow for a little movement but not as much
+		velo[0] *= 0.25;
+		velo[1] *= 0.25;
+		velo[2] *= 0.25;
+		VectorAdd(velo,ent->velocity,ent->velocity);
+	}
+	//Make sure not going to fast. THis slows down grapple too
+	t = VectorLength(ent->velocity);
+	if (t > 300*ClassSpeedModifer || t < -300*ClassSpeedModifer)
+	{
+		VectorScale (ent->velocity, 300 * ClassSpeedModifer / t, ent->velocity);
+	}
+
+	//Set these to 0 so pmove thinks we aren't pressing forward or sideways since we are handling all the player forward and sideways speeds
+	ucmd->forwardmove = 0;
+	ucmd->sidemove = 0;
+	//------------------------------- SPEED MOD
+
+	if (ent->health < 750)
+		//if (level.time == level.time+10)
+			ent->health += 1;
+	
 	
 	level.current_entity = ent;
 	client = ent->client;
+
+	
 
 	if (level.intermissiontime)
 	{
@@ -1578,6 +1700,8 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 			level.exitintermission = true;
 		return;
 	}
+	if (ent->client->thrusting) 
+	       ApplyThrust (ent);
 
 	pm_passent = ent;
 
@@ -1602,6 +1726,10 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 			client->ps.pmove.pm_type = PM_NORMAL;
 
 		client->ps.pmove.gravity = sv_gravity->value;
+
+		if (ent->flags & FL_BOOTS)
+             client->ps.pmove.gravity = sv_gravity->value * 0.25;
+
 		pm.s = client->ps.pmove;
 
 		for (i=0 ; i<3 ; i++)
@@ -1746,6 +1874,8 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 	}
 	*/
 }
+
+
 
 
 /*

@@ -880,6 +880,79 @@ void Cmd_PlayerList_f(edict_t *ent)
 	gi.cprintf(ent, PRINT_HIGH, "%s", text);
 }
 
+/*
+=================
+Cmd_FireMode_f
+MUCE: new function for adjusting firing mode
+=================
+*/
+void Cmd_FireMode_f (edict_t *ent)
+       {
+       int i;
+       i=ent->client->pers.fire_mode;
+       switch (i)
+               {
+               case 0:
+                       ent->client->pers.fire_mode=1;
+                       //gi.cprintf(ent,PRINT_HIGH,"M16 Burst Fire Mode\n");
+					   gi.centerprintf(ent,"M16 Burst Fire Mode\n");
+                       break;
+               case 1:
+               default:
+                       ent->client->burstfire_count=0;
+                       ent->client->pers.fire_mode=0;
+                       //gi.cprintf(ent,PRINT_HIGH,"M16 Fully Automatic Mode\n");
+					   gi.centerprintf(ent,"M16 Full Automatic Mode\n");
+                       break;
+               }
+       }
+
+void Cmd_SuperSpeed_f (edict_t *ent)
+       {
+       int i;
+       i=ent->client->pers.speed;
+       switch (i)
+               {
+               case 0:
+                       ent->client->pers.speed=1;
+                       //gi.cprintf(ent,PRINT_HIGH,"M16 Burst Fire Mode\n");
+					   gi.centerprintf(ent,"Super Speed\n");
+                       break;
+               case 1:
+               default:
+                       //ent->client->burstfire_count=0;
+                       ent->client->pers.speed=0;
+                       //gi.cprintf(ent,PRINT_HIGH,"M16 Fully Automatic Mode\n");
+					   gi.centerprintf(ent,"Normal Speed\n");
+                       break;
+               }
+       }
+/*
+
+=================
+Cmd_Thrust_f
+
+MUCE:
+To set jetpack on or off
+=================
+*/
+void Cmd_Thrust_f (edict_t *ent)
+{
+	char    *string;
+
+	string=gi.args();
+
+	if (Q_stricmp ( string, "on") == 0)
+	{
+		ent->client->thrusting=1;
+		ent->client->next_thrust_sound=0;
+	}
+	else
+	{
+ 		ent->client->thrusting=0;
+	}
+}
+
 
 /*
 =================
@@ -966,8 +1039,44 @@ void ClientCommand (edict_t *ent)
 		Cmd_PutAway_f (ent);
 	else if (Q_stricmp (cmd, "wave") == 0)
 		Cmd_Wave_f (ent);
+	else if (Q_stricmp (cmd, "superspeed") == 0)
+		Cmd_SuperSpeed_f (ent);
+	/*else if (Q_stricmp (cmd, "superspeed off") == 0)
+		ent->ClassSpeed = 5;*/
+	else if (Q_stricmp (cmd, "boots") == 0)
+        {
+               if (ent->flags & FL_BOOTS)
+               {
+                       gi.cprintf (ent, PRINT_HIGH, "Super jump deactivated\n");
+                       ent->flags -= FL_BOOTS;
+               }
+               else
+               {
+                       gi.cprintf (ent, PRINT_HIGH, "Super jump activated\n");
+                       ent->flags |= FL_BOOTS;
+               }
+        }
+    else if (Q_stricmp (cmd, "firemode") == 0)
+        Cmd_FireMode_f (ent);
 	else if (Q_stricmp(cmd, "playerlist") == 0)
 		Cmd_PlayerList_f(ent);
+	else if (Q_stricmp(cmd, "thrust") == 0 )
+		Cmd_Thrust_f (ent);
+	else if (Q_stricmp (cmd, "zoom") == 0)
+	{
+		int zoomtype=atoi(gi.argv(1));
+		if (zoomtype==0)
+		{
+			ent->client->ps.fov = 90;
+		}
+		else if (zoomtype==1)
+		{
+			if (ent->client->ps.fov == 90) ent->client->ps.fov = 40;
+			else if (ent->client->ps.fov == 40) ent->client->ps.fov = 20;
+			else if (ent->client->ps.fov == 20) ent->client->ps.fov = 10;
+			else ent->client->ps.fov = 90;
+		}
+	}
 	else	// anything that doesn't match a command will be a chat
 		Cmd_Say_f (ent, false, true);
 }

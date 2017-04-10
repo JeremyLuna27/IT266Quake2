@@ -349,7 +349,7 @@ void blaster_touch (edict_t *self, edict_t *other, cplane_t *plane, csurface_t *
 		else
 			mod = MOD_BLASTER;
 		//T_Damage (other, self, self->owner, self->velocity, self->s.origin, plane->normal, 1, 200, DAMAGE_ENERGY, mod);
-		T_Damage (other, self, self->owner, self->velocity, self->s.origin, plane->normal, self->dmg, 1, DAMAGE_ENERGY, mod);
+		T_Damage (other, self, self->owner, self->velocity, self->s.origin, plane->normal, 2, 200, DAMAGE_ENERGY, mod);
 
 	}
 	else
@@ -447,7 +447,7 @@ void bounce_fire_blaster (edict_t *self, vec3_t start, vec3_t dir, int damage, i
 	bolt->nextthink = level.time + 6;
 	bolt->think = G_FreeEdict;
 	//bolt->dmg = damage;
-	bolt->dmg = 100;
+	bolt->dmg = 3;
 	bolt->classname = "bolt";
 	if (hyper)
 		bolt->spawnflags = 1;
@@ -501,7 +501,7 @@ void fire_blaster (edict_t *self, vec3_t start, vec3_t dir, int damage, int spee
 	bolt->nextthink = level.time + 6;
 	bolt->think = G_FreeEdict;
 	//bolt->dmg = damage;
-	bolt->dmg = 100;
+	bolt->dmg = damage;
 	bolt->classname = "bolt";
 	if (hyper)
 		bolt->spawnflags = 1;

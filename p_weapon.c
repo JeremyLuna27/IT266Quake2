@@ -922,7 +922,7 @@ void Weapon_Blaster_Fire (edict_t *ent)
 		damage = 15;
 	else
 		damage = 10;
-	Blaster_Fire (ent, vec3_origin, damage, false, EF_BLASTER);
+	Blaster_Fire (ent, vec3_origin, 2, false, EF_BLASTER);
 
 	/*VectorSet(extraVec, 0, 8, 0);
 	VectorAdd(extraVec, vec3_origin, extraVec);
@@ -1120,18 +1120,30 @@ void Machinegun_Fire (edict_t *ent)
 	int			kick = 2;
 	vec3_t		offset;
 
-	if (!(ent->client->buttons & BUTTON_ATTACK))
+	/*if (!(ent->client->buttons & BUTTON_ATTACK))
 	{
 		ent->client->machinegun_shots = 0;
 		ent->client->ps.gunframe++;
 		return;
+	}*/
+
+	if (!(ent->client->buttons & BUTTON_ATTACK) && 
+	( (ent->client->burstfire_count > 2) ||
+	(!ent->client->burstfire_count ) ) )
+	{
+        ent->client->machinegun_shots=0;
+        ent->client->burstfire_count=0;
+        ent->client->ps.gunframe++;
+        return;
 	}
 
-	if (ent->client->ps.gunframe == 5)
-		ent->client->ps.gunframe = 4;
-	else
-		ent->client->ps.gunframe = 5;
-
+	if (ent->client->burstfire_count < 3)
+	{
+		if (ent->client->ps.gunframe == 5)
+			ent->client->ps.gunframe = 4;
+		else
+			ent->client->ps.gunframe = 5;
+	}
 	if (ent->client->pers.inventory[ent->client->ammo_index] < 1)
 	{
 		ent->client->ps.gunframe = 6;
@@ -1140,6 +1152,7 @@ void Machinegun_Fire (edict_t *ent)
 			gi.sound(ent, CHAN_VOICE, gi.soundindex("weapons/noammo.wav"), 1, ATTN_NORM, 0);
 			ent->pain_debounce_time = level.time + 1;
 		}
+		ent->client->burstfire_count=0;
 		NoAmmoWeaponChange (ent);
 		return;
 	}
@@ -1159,7 +1172,7 @@ void Machinegun_Fire (edict_t *ent)
 	ent->client->kick_angles[0] = ent->client->machinegun_shots * -1.5;
 
 	// raise the gun as it is firing
-	if (!deathmatch->value)
+	if (!deathmatch->value && !ent->client->pers.fire_mode)
 	{
 		ent->client->machinegun_shots++;
 		if (ent->client->machinegun_shots > 9)
@@ -1171,7 +1184,7 @@ void Machinegun_Fire (edict_t *ent)
 	AngleVectors (angles, forward, right, NULL);
 	VectorSet(offset, 0, 8, ent->viewheight-8);
 	P_ProjectSource (ent->client, ent->s.origin, offset, forward, right, start);
-	fire_bullet (ent, start, forward, damage, kick, DEFAULT_BULLET_HSPREAD, DEFAULT_BULLET_VSPREAD, MOD_MACHINEGUN);
+	/*fire_bullet (ent, start, forward, damage, kick, DEFAULT_BULLET_HSPREAD, DEFAULT_BULLET_VSPREAD, MOD_MACHINEGUN);
 
 	gi.WriteByte (svc_muzzleflash);
 	gi.WriteShort (ent-g_edicts);
@@ -1182,6 +1195,45 @@ void Machinegun_Fire (edict_t *ent)
 
 	if (! ( (int)dmflags->value & DF_INFINITE_AMMO ) )
 		ent->client->pers.inventory[ent->client->ammo_index]--;
+*/
+
+	//BURST FIRE MOD
+	switch (ent->client->pers.fire_mode)
+        {
+        // Fire Burst Fire
+        case 1:
+                ent->client->burstfire_count++;
+                if (ent->client->burstfire_count < 4)
+                {
+	fire_bullet (ent, start, forward, damage*2, kick/2, DEFAULT_BULLET_HSPREAD/2, DEFAULT_BULLET_VSPREAD/2,0);
+                gi.WriteByte (svc_muzzleflash);
+                gi.WriteShort (ent-g_edicts);
+                gi.WriteByte (MZ_MACHINEGUN | is_silenced);
+                gi.multicast (ent->s.origin, MULTICAST_PVS);
+
+                PlayerNoise(ent, start, PNOISE_WEAPON);
+
+	ent->client->pers.inventory[ent->client->ammo_index] -= ent->client->pers.weapon->quantity;
+                }       
+                else if (ent->client->burstfire_count > 6)
+                        ent->client->burstfire_count=0;
+                break;
+
+        // Fire Fully Automatic
+
+        case 0:
+        default:
+	fire_bullet (ent, start, forward, damage, kick, DEFAULT_BULLET_HSPREAD, DEFAULT_BULLET_VSPREAD,0);
+                gi.WriteByte (svc_muzzleflash);
+                gi.WriteShort (ent-g_edicts);
+                gi.WriteByte (MZ_MACHINEGUN | is_silenced);
+                gi.multicast (ent->s.origin, MULTICAST_PVS);
+
+                PlayerNoise(ent, start, PNOISE_WEAPON);
+
+	ent->client->pers.inventory[ent->client->ammo_index] -= ent->client->pers.weapon->quantity;
+                break;
+        }
 
 	ent->client->anim_priority = ANIM_ATTACK;
 	if (ent->client->ps.pmove.pm_flags & PMF_DUCKED)
@@ -1198,21 +1250,138 @@ void Machinegun_Fire (edict_t *ent)
 
 void Weapon_Machinegun (edict_t *ent)
 {
-	/*static int	pause_frames[]	= {23, 45, 0};
+	static int	pause_frames[]	= {23, 45, 0};
 	static int	fire_frames[]	= {4, 5, 0};
 
-	Weapon_Generic (ent, 3, 5, 10, 49, pause_frames, fire_frames, Machinegun_Fire);*/
+	Weapon_Generic (ent, 3, 5, 10, 49, pause_frames, fire_frames, Machinegun_Fire);
 
-	static int	pause_frames[]	= {22, 28, 34, 0};
+	/*static int	pause_frames[]	= {22, 28, 34, 0};
 	static int	fire_frames[]	= {8, 9, 0};
 
-	Weapon_Generic (ent, 3, 7, 38, 39, pause_frames, fire_frames, Machinegun_Fire);
+	Weapon_Generic (ent, 3, 7, 38, 39, pause_frames, fire_frames, Machinegun_Fire);*/
 	
 
 	/*static int	pause_frames[]	= {19, 32, 0};
 	static int	fire_frames[]	= {5, 0};
 	Weapon_Generic (ent, 4, 8, 52, 55, pause_frames, fire_frames, Weapon_HyperBlaster_FireMachine);*/
 }
+
+
+/*
+======================================================================
+
+RAILGUN
+
+======================================================================
+*/
+
+void weapon_railgun_fire (edict_t *ent)
+{
+	vec3_t		start;
+	vec3_t		forward, right;
+	vec3_t		offset;
+	int			damage;
+	int			kick;
+
+	if (deathmatch->value)
+	{	// normal damage is too extreme in dm
+		damage = 100;
+		kick = 200;
+	}
+	else
+	{
+		damage = 150;
+		kick = 250;
+	}
+
+	if (is_quad)
+	{
+		damage *= 4;
+		kick *= 4;
+	}
+
+	AngleVectors (ent->client->v_angle, forward, right, NULL);
+
+	VectorScale (forward, -3, ent->client->kick_origin);
+	ent->client->kick_angles[0] = -3;
+
+	VectorSet(offset, 0, 7,  ent->viewheight-8);
+	P_ProjectSource (ent->client, ent->s.origin, offset, forward, right, start);
+	fire_rail (ent, start, forward, damage, kick);
+
+	// send muzzle flash
+	gi.WriteByte (svc_muzzleflash);
+	gi.WriteShort (ent-g_edicts);
+	gi.WriteByte (MZ_RAILGUN | is_silenced);
+	gi.multicast (ent->s.origin, MULTICAST_PVS);
+
+	ent->client->ps.gunframe++;
+	PlayerNoise(ent, start, PNOISE_WEAPON);
+
+	if (! ( (int)dmflags->value & DF_INFINITE_AMMO ) )
+		ent->client->pers.inventory[ent->client->ammo_index]--;
+	//TELEPORT WORKS
+	//CHECK
+	teleport_fire_blaster (ent, start, forward, damage, 1000, 0,false);
+}
+void weapon_railgun_fire2 (edict_t *ent)
+{
+	vec3_t		start;
+	vec3_t		forward, right;
+	vec3_t		offset;
+	int			damage;
+	int			kick;
+
+	if (deathmatch->value)
+	{	// normal damage is too extreme in dm
+		damage = 100;
+		kick = 200;
+	}
+	else
+	{
+		damage = 10;
+		kick = 0;
+	}
+
+	if (is_quad)
+	{
+		damage *= 4;
+		kick *= 4;
+	}
+
+	AngleVectors (ent->client->v_angle, forward, right, NULL);
+
+	VectorScale (forward, -3, ent->client->kick_origin);
+	ent->client->kick_angles[0] = -3;
+
+	VectorSet(offset, 0, 7,  ent->viewheight-8);
+	P_ProjectSource (ent->client, ent->s.origin, offset, forward, right, start);
+	fire_rail (ent, start, forward, damage, kick);
+
+	// send muzzle flash
+	gi.WriteByte (svc_muzzleflash);
+	gi.WriteShort (ent-g_edicts);
+	gi.WriteByte (MZ_RAILGUN | is_silenced);
+	gi.multicast (ent->s.origin, MULTICAST_PVS);
+
+	ent->client->ps.gunframe++;
+	PlayerNoise(ent, start, PNOISE_WEAPON);
+
+	if (! ( (int)dmflags->value & DF_INFINITE_AMMO ) )
+		ent->client->pers.inventory[ent->client->ammo_index]--;
+	//TELEPORT WORKS
+	//CHECK
+	//teleport_fire_blaster (ent, start, forward, damage, 1000, 0,false);
+}
+
+void Weapon_Railgun (edict_t *ent)
+{
+	static int	pause_frames[]	= {56, 0};
+	static int	fire_frames[]	= {4, 0};
+
+	Weapon_Generic (ent, 3, 18, 56, 61, pause_frames, fire_frames, weapon_railgun_fire);
+}
+
 
 void Chaingun_Fire (edict_t *ent)
 {
@@ -1272,16 +1441,16 @@ void Chaingun_Fire (edict_t *ent)
 	}
 
 	if (ent->client->ps.gunframe <= 9)
-		shots = 1;
+		shots = 10;
 	else if (ent->client->ps.gunframe <= 14)
 	{
 		if (ent->client->buttons & BUTTON_ATTACK)
-			shots = 2;
+			shots = 10;
 		else
-			shots = 1;
+			shots = 10;
 	}
 	else
-		shots = 3;
+		shots = 10;
 
 	if (ent->client->pers.inventory[ent->client->ammo_index] < shots)
 		shots = ent->client->pers.inventory[ent->client->ammo_index];
@@ -1339,7 +1508,7 @@ void Weapon_Chaingun (edict_t *ent)
 	static int	pause_frames[]	= {38, 43, 51, 61, 0};
 	static int	fire_frames[]	= {5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 0};
 
-	Weapon_Generic (ent, 4, 31, 61, 64, pause_frames, fire_frames, Chaingun_Fire);
+	Weapon_Generic (ent, 4, 31, 61, 64, pause_frames, fire_frames, weapon_railgun_fire2);
 }
 
 
@@ -1460,73 +1629,6 @@ void Weapon_SuperShotgun (edict_t *ent)
 }
 
 
-
-/*
-======================================================================
-
-RAILGUN
-
-======================================================================
-*/
-
-void weapon_railgun_fire (edict_t *ent)
-{
-	vec3_t		start;
-	vec3_t		forward, right;
-	vec3_t		offset;
-	int			damage;
-	int			kick;
-
-	if (deathmatch->value)
-	{	// normal damage is too extreme in dm
-		damage = 100;
-		kick = 200;
-	}
-	else
-	{
-		damage = 150;
-		kick = 250;
-	}
-
-	if (is_quad)
-	{
-		damage *= 4;
-		kick *= 4;
-	}
-
-	AngleVectors (ent->client->v_angle, forward, right, NULL);
-
-	VectorScale (forward, -3, ent->client->kick_origin);
-	ent->client->kick_angles[0] = -3;
-
-	VectorSet(offset, 0, 7,  ent->viewheight-8);
-	P_ProjectSource (ent->client, ent->s.origin, offset, forward, right, start);
-	fire_rail (ent, start, forward, damage, kick);
-
-	// send muzzle flash
-	gi.WriteByte (svc_muzzleflash);
-	gi.WriteShort (ent-g_edicts);
-	gi.WriteByte (MZ_RAILGUN | is_silenced);
-	gi.multicast (ent->s.origin, MULTICAST_PVS);
-
-	ent->client->ps.gunframe++;
-	PlayerNoise(ent, start, PNOISE_WEAPON);
-
-	if (! ( (int)dmflags->value & DF_INFINITE_AMMO ) )
-		ent->client->pers.inventory[ent->client->ammo_index]--;
-	//TELEPORT WORKS
-	//CHECK
-	teleport_fire_blaster (ent, start, forward, damage, 1000, 0,false);
-}
-
-
-void Weapon_Railgun (edict_t *ent)
-{
-	static int	pause_frames[]	= {56, 0};
-	static int	fire_frames[]	= {4, 0};
-
-	Weapon_Generic (ent, 3, 18, 56, 61, pause_frames, fire_frames, weapon_railgun_fire);
-}
 
 
 /*

@@ -50,6 +50,7 @@
 #define FL_POWER_ARMOR			0x00001000	// power armor (if any) is active
 #define FL_RESPAWN				0x80000000	// used for item respawning
 
+#define FL_BOOTS                               0x00002000      //Anti-Gravity boots flag
 
 #define	FRAMETIME		0.1
 
@@ -841,6 +842,9 @@ typedef struct
 	gitem_t		*weapon;
 	gitem_t		*lastweapon;
 
+	qboolean        fire_mode;
+	qboolean		speed;
+
 	int			power_cubes;	// used for tracking the cubes in coop games
 	int			score;			// for calculating total unit score in coop games
 
@@ -917,6 +921,7 @@ struct gclient_s
 	int			breather_sound;
 
 	int			machinegun_shots;	// for weapon raising
+	int			burstfire_count;
 
 	// animation vars
 	int			anim_end;
@@ -942,6 +947,9 @@ struct gclient_s
 	int			flood_whenhead;		// head pointer for when said
 
 	float		respawn_time;		// can respawn when time > this
+
+	qboolean    thrusting;              // 1 on 0 off
+	float       next_thrust_sound;
 
 	edict_t		*chase_target;		// player we are chasing
 	qboolean	update_chase;		// need to update chase info?
@@ -1100,5 +1108,6 @@ struct edict_s
 	float poison_level;
 	int poison_damage;
 	edict_t *poisoner;			//the plyer who inflicted the poison
+	int ClassSpeed;
 };
 
