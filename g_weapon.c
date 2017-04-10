@@ -349,7 +349,7 @@ void blaster_touch (edict_t *self, edict_t *other, cplane_t *plane, csurface_t *
 		else
 			mod = MOD_BLASTER;
 		//T_Damage (other, self, self->owner, self->velocity, self->s.origin, plane->normal, 1, 200, DAMAGE_ENERGY, mod);
-		T_Damage (other, self, self->owner, self->velocity, self->s.origin, plane->normal, 2, 200, DAMAGE_ENERGY, mod);
+		T_Damage (other, self, self->owner, self->velocity, self->s.origin, plane->normal, self->dmg, 10, DAMAGE_ENERGY, mod);
 
 	}
 	else
@@ -497,11 +497,11 @@ void fire_blaster (edict_t *self, vec3_t start, vec3_t dir, int damage, int spee
 	bolt->s.modelindex = gi.modelindex ("models/objects/laser/tris.md2");
 	bolt->s.sound = gi.soundindex ("misc/lasfly.wav");
 	bolt->owner = self;
+	bolt->dmg = damage;
 	bolt->touch = blaster_touch;
 	bolt->nextthink = level.time + 6;
 	bolt->think = G_FreeEdict;
 	//bolt->dmg = damage;
-	bolt->dmg = damage;
 	bolt->classname = "bolt";
 	if (hyper)
 		bolt->spawnflags = 1;

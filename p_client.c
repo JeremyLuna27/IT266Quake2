@@ -647,6 +647,7 @@ void InitClientPersistant (gclient_t *client)
 	client->pers.max_slugs		= 50;
 	client->pers.fire_mode		= 0;
 	client->pers.speed			= 0;
+	client->pers.instakill		= 0;
 
 	client->pers.connected = true;
 }

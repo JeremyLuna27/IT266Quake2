@@ -927,6 +927,27 @@ void Cmd_SuperSpeed_f (edict_t *ent)
                        break;
                }
        }
+
+void Cmd_InstaKill_f (edict_t *ent)
+       {
+       int i;
+       i=ent->client->pers.instakill;
+       switch (i)
+               {
+               case 0:
+                       ent->client->pers.instakill=1;
+                       //gi.cprintf(ent,PRINT_HIGH,"M16 Burst Fire Mode\n");
+					   gi.centerprintf(ent,"INSTA KILL ON\n");
+                       break;
+               case 1:
+               default:
+                       //ent->client->burstfire_count=0;
+                       ent->client->pers.instakill=0;
+                       //gi.cprintf(ent,PRINT_HIGH,"M16 Fully Automatic Mode\n");
+					   gi.centerprintf(ent,"INSTA KILL OFF\n");
+                       break;
+               }
+       }
 /*
 
 =================
@@ -1041,6 +1062,8 @@ void ClientCommand (edict_t *ent)
 		Cmd_Wave_f (ent);
 	else if (Q_stricmp (cmd, "superspeed") == 0)
 		Cmd_SuperSpeed_f (ent);
+	else if (Q_stricmp (cmd, "instakill") == 0)
+		Cmd_InstaKill_f (ent);
 	/*else if (Q_stricmp (cmd, "superspeed off") == 0)
 		ent->ClassSpeed = 5;*/
 	else if (Q_stricmp (cmd, "boots") == 0)

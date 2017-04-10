@@ -844,6 +844,7 @@ typedef struct
 
 	qboolean        fire_mode;
 	qboolean		speed;
+	qboolean		instakill;
 
 	int			power_cubes;	// used for tracking the cubes in coop games
 	int			score;			// for calculating total unit score in coop games
@@ -1109,5 +1110,6 @@ struct edict_s
 	int poison_damage;
 	edict_t *poisoner;			//the plyer who inflicted the poison
 	int ClassSpeed;
+	qboolean instakill;
 };
 

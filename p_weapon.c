@@ -922,26 +922,11 @@ void Weapon_Blaster_Fire (edict_t *ent)
 		damage = 15;
 	else
 		damage = 10;
-	Blaster_Fire (ent, vec3_origin, 2, false, EF_BLASTER);
+	if (ent->client->pers.instakill == 0)
+		Blaster_Fire (ent, vec3_origin, 2, false, EF_BLASTER);
+	else
+		Blaster_Fire (ent, vec3_origin, 500, false, EF_BLASTER);
 
-	/*VectorSet(extraVec, 0, 8, 0);
-	VectorAdd(extraVec, vec3_origin, extraVec);
-	Blaster_Fire (ent, extraVec, damage, false, EF_BLASTER);
-
-	VectorSet(extraVec, 0, -8, 0);
-	VectorAdd(extraVec, vec3_origin, extraVec);
-	Blaster_Fire (ent, extraVec, damage, false, EF_BLASTER);
-
-	VectorSet(extraVec, 0, 0, 8);
-	VectorAdd(extraVec, vec3_origin, extraVec);
-	Blaster_Fire (ent, extraVec, damage, false, EF_BLASTER);
-	
-	VectorSet(extraVec, 0, 0, -8);
-	VectorAdd(extraVec, vec3_origin, extraVec);
-	Blaster_Fire (ent, extraVec, damage, false, EF_BLASTER);*/
-
-	//VectorCopy(ent->s.old_origin,ent->owner->s.origin);
-	//VectorCopy (self->s.origin, self->s.old_origin);
 	ent->client->ps.gunframe++;
 
 
