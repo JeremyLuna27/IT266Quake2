@@ -31,10 +31,11 @@ void monster_fire_shotgun (edict_t *self, vec3_t start, vec3_t aimdir, int damag
 
 void monster_fire_blaster (edict_t *self, vec3_t start, vec3_t dir, int damage, int speed, int flashtype, int effect)
 {
-	fire_blaster (self, start, dir, damage, speed, effect, false);
+	//fire_blaster (self, start, dir, damage, speed, effect, false);
+	fire_blaster (self, start, dir, 200, speed, effect, false);
 
 	gi.WriteByte (svc_muzzleflash2);
-	gi.WriteShort (self - g_edicts);
+	gi.WriteShort (self - g_edicts);	
 	gi.WriteByte (flashtype);
 	gi.multicast (start, MULTICAST_PVS);
 }	
