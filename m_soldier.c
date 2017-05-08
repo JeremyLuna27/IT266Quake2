@@ -1260,6 +1260,8 @@ void SP_monster_soldier (edict_t *self)
 
 /*QUAKED monster_soldier_ss (1 .5 0) (-16 -16 -24) (16 16 32) Ambush Trigger_Spawn Sight
 */
+
+
 void SP_monster_soldier_ss (edict_t *self)
 {
 	if (deathmatch->value)
@@ -1268,6 +1270,7 @@ void SP_monster_soldier_ss (edict_t *self)
 		return;
 	}
 
+	//init_game_mode(self);
 	SP_monster_soldier_x (self);
 
 	sound_pain_ss = gi.soundindex ("soldier/solpain3.wav");

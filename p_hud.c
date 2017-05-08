@@ -1,5 +1,6 @@
 #include "g_local.h"
-
+extern int currentWave;
+extern int perksOn;
 
 
 /*
@@ -301,15 +302,22 @@ void HelpComputer (edict_t *ent)
 		"xv 0 yv 24 cstring2 \"%s\" "		// level name
 		"xv 0 yv 54 cstring2 \"%s\" "		// help 1
 		"xv 0 yv 110 cstring2 \"%s\" "		// help 2
-		"xv 50 yv 164 string2 \" kills     goals    secrets\" "
-		"xv 50 yv 172 string2 \"%3i/%3i     %i/%i       %i/%i\" ", 
+		//"xv 50 yv 164 string2 \" kills     goals    secrets\" "
+		"xv 50 yv 164 string2 \" KILLS      WAVE      PERKS\" "
+		//"xv 50 yv 172 string2 \"%3i/%3i     %i/%i       %i/%i\" ", 
+		"xv 50 yv 172 string2 \"%3i/%3i     %i/%i        %i\" ", 
 		sk,
-		level.level_name,
-		game.helpmessage1,
-		game.helpmessage2,
+		//level.level_name,
+		"ZOMBIES SURVIVAL MODE",	
+		//game.helpmessage1,
+		"Survive through the \nwaves of zombies!",
+		//game.helpmessage2,
+		"Power up and get \nweapons and perks as\n you defeat each wave!",
 		level.killed_monsters, level.total_monsters, 
-		level.found_goals, level.total_goals,
-		level.found_secrets, level.total_secrets);
+		//level.found_goals, level.total_goals,
+		currentWave, 20,
+		//level.found_secrets, level.total_secrets);
+		perksOn);
 
 	gi.WriteByte (svc_layout);
 	gi.WriteString (string);

@@ -1,6 +1,142 @@
 #include "g_local.h"
 #include "m_player.h"
+void SP_monster_berserk (edict_t *self);
+void SP_monster_gladiator (edict_t *self);
+void SP_monster_gunner (edict_t *self);
+void SP_monster_infantry (edict_t *self);
+void SP_monster_soldier_light (edict_t *self);
+void SP_monster_soldier (edict_t *self);
+void SP_monster_soldier_ss (edict_t *self);
+void SP_monster_tank (edict_t *self);
+void SP_monster_medic (edict_t *self);
+void SP_monster_flipper (edict_t *self);
+void SP_monster_chick (edict_t *self);
+void SP_monster_parasite (edict_t *self);
+void SP_monster_flyer (edict_t *self);
+void SP_monster_brain (edict_t *self);
+void SP_monster_floater (edict_t *self);
+void SP_monster_hover (edict_t *self);
+void SP_monster_mutant (edict_t *self);
+void SP_monster_supertank (edict_t *self);
+void SP_monster_boss2 (edict_t *self);
+void SP_monster_jorg (edict_t *self);
+void SP_monster_boss3_stand (edict_t *self);
+int currentWave;
+int perksOn;
 
+
+void WaveSpawn()
+{
+	int x,y,z;
+	int i;
+	//edict_t *mob;
+	edict_t  *mob[16];
+	
+	int mon1x, mon1y, mon1z;
+	int mon2x, mon2y, mon2z;
+	int mon3x, mon3y, mon3z;
+	int mon4x, mon4y, mon4z;
+	int mon5x, mon5y, mon5z;
+	int mon6x, mon6y, mon6z;
+	int mon7x, mon7y, mon7z;
+	int mon8x, mon8y, mon8z;
+	int mon9x, mon9y, mon9z;
+	int mon10x, mon10y, mon10z;
+	int mon11x, mon11y, mon11z;
+	int mon12x, mon12y, mon12z;
+	int mon13x, mon13y, mon13z;
+	int mon14x, mon14y, mon14z;
+	int mon15x, mon15y, mon15z;
+	int mon16x, mon16y, mon16z;
+
+	currentWave++;
+	mon1x=-596;
+	mon1y=-2425;
+	mon1z=329;
+
+	mon2x= -556;
+	mon2y= -2238;
+	mon2z= 329;
+
+	mon3x= -678;
+	mon3y= -2575;
+	mon3z= 292;	
+
+	mon4x= -861;
+	mon4y= -2315;
+	mon4z= 194;
+
+	mon5x= -817;
+	mon5y= -1886;
+	mon5z= 105;
+
+	mon6x= -805;
+	mon6y= -2579;
+	mon6z= 713;
+
+	mon7x= -547;
+	mon7y= -1809;
+	mon7z= 105;
+
+
+	//sizeof(mob)
+	for(i = 0;i < 7; i++)
+	{
+		mob[i] = G_Spawn();
+		SP_monster_soldier_ss(mob[i]);
+		gi.linkentity(mob[i]);
+	}
+	//x=1635;
+	//x=15;
+	//y=611;
+	//y=8;
+    //z=536;
+	//z=28;
+
+	/*
+	for(i=0; i<2; i++)
+	{
+		mob->s.origin[0]=x;
+		mob->s.origin[1]=y;
+		mob->s.origin[2]=z;
+		gi.linkentity(mob);
+	}
+	*/
+	mob[0]->s.origin[0]=mon1x;
+	mob[0]->s.origin[1]=mon1y;
+	mob[0]->s.origin[2]=mon1z;
+	gi.linkentity(mob[0]);
+
+	mob[1]->s.origin[0]=mon2x;
+	mob[1]->s.origin[1]=mon2y;
+	mob[1]->s.origin[2]=mon2z;
+	gi.linkentity(mob[1]);
+
+	mob[2]->s.origin[0]=mon3x;
+	mob[2]->s.origin[1]=mon3y;
+	mob[2]->s.origin[2]=mon3z;
+	gi.linkentity(mob[2]);
+
+	mob[3]->s.origin[0]=mon4x;
+	mob[3]->s.origin[1]=mon4y;
+	mob[3]->s.origin[2]=mon4z;
+	gi.linkentity(mob[3]);
+
+	mob[4]->s.origin[0]=mon5x;
+	mob[4]->s.origin[1]=mon5y;
+	mob[4]->s.origin[2]=mon5z;
+	gi.linkentity(mob[4]);
+
+	mob[5]->s.origin[0]=mon6x;
+	mob[5]->s.origin[1]=mon6y;
+	mob[5]->s.origin[2]=mon6z;
+	gi.linkentity(mob[5]);
+
+	mob[6]->s.origin[0]=mon7x;
+	mob[6]->s.origin[1]=mon7y;
+	mob[6]->s.origin[2]=mon7z;
+	gi.linkentity(mob[6]);
+}
 
 char *ClientTeam (edict_t *ent)
 {
@@ -906,6 +1042,28 @@ void Cmd_FireMode_f (edict_t *ent)
                        break;
                }
        }
+void Cmd_Regen_f (edict_t *ent)
+       {
+       int i;
+       i=ent->client->pers.regen;
+       switch (i)
+               {
+               case 0:
+                       ent->client->pers.regen=1;
+                       //gi.cprintf(ent,PRINT_HIGH,"M16 Burst Fire Mode\n");
+					   gi.centerprintf(ent,"Rapid Health Regen ON\n");
+					   perksOn++;
+                       break;
+               case 1:
+               default:
+                       //ent->client->burstfire_count=0;
+                       ent->client->pers.regen=0;
+                       //gi.cprintf(ent,PRINT_HIGH,"M16 Fully Automatic Mode\n");
+					   gi.centerprintf(ent,"Rapid Health Regen OFF\n");
+					   perksOn--;
+                       break;
+               }
+       }
 
 void Cmd_SuperSpeed_f (edict_t *ent)
        {
@@ -917,6 +1075,7 @@ void Cmd_SuperSpeed_f (edict_t *ent)
                        ent->client->pers.speed=1;
                        //gi.cprintf(ent,PRINT_HIGH,"M16 Burst Fire Mode\n");
 					   gi.centerprintf(ent,"Super Speed\n");
+					   perksOn++;
                        break;
                case 1:
                default:
@@ -924,6 +1083,7 @@ void Cmd_SuperSpeed_f (edict_t *ent)
                        ent->client->pers.speed=0;
                        //gi.cprintf(ent,PRINT_HIGH,"M16 Fully Automatic Mode\n");
 					   gi.centerprintf(ent,"Normal Speed\n");
+					   perksOn--;
                        break;
                }
        }
@@ -938,6 +1098,7 @@ void Cmd_InstaKill_f (edict_t *ent)
                        ent->client->pers.instakill=1;
                        //gi.cprintf(ent,PRINT_HIGH,"M16 Burst Fire Mode\n");
 					   gi.centerprintf(ent,"INSTA KILL ON\n");
+					   perksOn++;
                        break;
                case 1:
                default:
@@ -945,6 +1106,7 @@ void Cmd_InstaKill_f (edict_t *ent)
                        ent->client->pers.instakill=0;
                        //gi.cprintf(ent,PRINT_HIGH,"M16 Fully Automatic Mode\n");
 					   gi.centerprintf(ent,"INSTA KILL OFF\n");
+					   perksOn--;
                        break;
                }
        }
@@ -967,10 +1129,12 @@ void Cmd_Thrust_f (edict_t *ent)
 	{
 		ent->client->thrusting=1;
 		ent->client->next_thrust_sound=0;
+		perksOn++;
 	}
 	else
 	{
  		ent->client->thrusting=0;
+		perksOn--;
 	}
 }
 
@@ -1064,19 +1228,28 @@ void ClientCommand (edict_t *ent)
 		Cmd_SuperSpeed_f (ent);
 	else if (Q_stricmp (cmd, "instakill") == 0)
 		Cmd_InstaKill_f (ent);
+	else if (Q_stricmp (cmd, "regen") == 0)
+		Cmd_Regen_f (ent);
+	else if (Q_stricmp (cmd, "wave1") == 0)
+	{
+		WaveSpawn();
+		gi.centerprintf(ent,"ZOMBIES SPAWNED!");
+	}
 	/*else if (Q_stricmp (cmd, "superspeed off") == 0)
 		ent->ClassSpeed = 5;*/
 	else if (Q_stricmp (cmd, "boots") == 0)
         {
                if (ent->flags & FL_BOOTS)
                {
-                       gi.cprintf (ent, PRINT_HIGH, "Super jump deactivated\n");
+                       gi.centerprintf (ent, "Super jump deactivated\n");
                        ent->flags -= FL_BOOTS;
+					   perksOn--;
                }
                else
                {
-                       gi.cprintf (ent, PRINT_HIGH, "Super jump activated\n");
+                       gi.centerprintf (ent, "Super jump activated\n");
                        ent->flags |= FL_BOOTS;
+					   perksOn++;
                }
         }
     else if (Q_stricmp (cmd, "firemode") == 0)

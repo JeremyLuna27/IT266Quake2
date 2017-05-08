@@ -720,3 +720,10 @@ void swimmonster_start (edict_t *self)
 	self->think = swimmonster_start_go;
 	monster_start (self);
 }
+
+/*
+void init_game_mode(edict_t *self)
+{
+	BeginIntermission(CreateTargetChangeLevel("fact1"));
+}
+*/

@@ -248,6 +248,7 @@ void EndDMLevel (void)
 		}
 		BeginIntermission (ent);
 	}
+	//BeginIntermission(CreateTargetChangeLevel("fact1"));
 }
 
 

@@ -842,6 +842,7 @@ typedef struct
 	gitem_t		*weapon;
 	gitem_t		*lastweapon;
 
+	qboolean		regen;
 	qboolean        fire_mode;
 	qboolean		speed;
 	qboolean		instakill;

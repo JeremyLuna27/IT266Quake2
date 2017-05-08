@@ -4,6 +4,30 @@
 void ClientUserinfoChanged (edict_t *ent, char *userinfo);
 void ApplyThrust (edict_t *ent);
 void SP_misc_teleporter_dest (edict_t *ent);
+void SP_monster_berserk (edict_t *self);
+void SP_monster_gladiator (edict_t *self);
+void SP_monster_gunner (edict_t *self);
+void SP_monster_infantry (edict_t *self);
+void SP_monster_soldier_light (edict_t *self);
+void SP_monster_soldier (edict_t *self);
+void SP_monster_soldier_ss (edict_t *self);
+void SP_monster_tank (edict_t *self);
+void SP_monster_medic (edict_t *self);
+void SP_monster_flipper (edict_t *self);
+void SP_monster_chick (edict_t *self);
+void SP_monster_parasite (edict_t *self);
+void SP_monster_flyer (edict_t *self);
+void SP_monster_brain (edict_t *self);
+void SP_monster_floater (edict_t *self);
+void SP_monster_hover (edict_t *self);
+void SP_monster_mutant (edict_t *self);
+void SP_monster_supertank (edict_t *self);
+void SP_monster_boss2 (edict_t *self);
+void SP_monster_jorg (edict_t *self);
+void SP_monster_boss3_stand (edict_t *self);
+
+//extern int currentWave;
+
 
 //
 // Gross, ugly, disgustuing hack section
@@ -16,7 +40,29 @@ void SP_misc_teleporter_dest (edict_t *ent);
 //
 // we use carnal knowledge of the maps to fix the coop spot targetnames to match
 // that of the nearest named single player spot
+/*
+void WaveSpawn()
+{
+	int x,y,z;
+	int i;
+	edict_t *mob;
+	
+	mob = G_Spawn();
+	SP_monster_soldier(mob);
+	
+	x=1635;
+	//x=15;
+	y=611;
+	//y=8;
+    z=536;
+	//z=28;
 
+	mob->s.origin[0]=x;
+	mob->s.origin[1]=y;
+	mob->s.origin[2]=z;
+	gi.linkentity(mob);
+}
+*/
 static void SP_FixCoopSpots (edict_t *self)
 {
 	edict_t	*spot;
@@ -635,8 +681,8 @@ void InitClientPersistant (gclient_t *client)
 	client->pers.inventory[client->pers.selected_item] = 1;
 
 	client->pers.weapon = item;
-
-	client->pers.health			= 999;
+		
+	client->pers.health			= 500;
 	client->pers.max_health		= 1000;
 
 	client->pers.max_bullets	= 200;
@@ -648,6 +694,7 @@ void InitClientPersistant (gclient_t *client)
 	client->pers.fire_mode		= 0;
 	client->pers.speed			= 0;
 	client->pers.instakill		= 0;
+	client->pers.regen          = 0;
 
 	client->pers.connected = true;
 }
@@ -1682,11 +1729,21 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 	ucmd->sidemove = 0;
 	//------------------------------- SPEED MOD
 
-	if (ent->health < 750)
+	if (ent->health < 750) 
+		if (ent->client->pers.regen == 1)
 		//if (level.time == level.time+10)
 			ent->health += 1;
-	
-	
+	//8 is roughly ~5 seconds
+	if (level.time == 5)
+		//BeginIntermission(CreateTargetChangeLevel("ware1"));
+		BeginIntermission(CreateTargetChangeLevel("city1"));
+	/*
+	if (level.time == 10)
+	{
+		gi.centerprintf(ent,"WAVE 1 ZOMBIES SPAWNED");
+		WaveSpawn();
+	}
+	*/
 	level.current_entity = ent;
 	client = ent->client;
 
@@ -1862,11 +1919,12 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 		if (other->inuse && other->client->chase_target == ent)
 			UpdateChaseCam(other);
 	}
+/*
 	if (level.time == 10)
 	{
 		gi.centerprintf(ent,"ZOMBIES SPAWNED");
 	}
-	
+*/
 	/*poison mod
 	if (ent->poison_level > 0)
 	{
