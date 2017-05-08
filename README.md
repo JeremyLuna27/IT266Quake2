@@ -1,7 +1,8 @@
 # IT266Quake2
 
 Zombies Survival Mod with new weapons and perks
-*Final files are in FINALMods branch
+
+*FINAL FILES ARE IN THE FINALMODS BRANCH
 
 
 Weapon Mods:
