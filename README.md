@@ -1,6 +1,8 @@
 # IT266Quake2
 
 Zombies Survival Mod with new weapons and perks
+*Final files are in FINALMods branch
+
 
 Weapon Mods:
 -blaster is now a flare pistol
