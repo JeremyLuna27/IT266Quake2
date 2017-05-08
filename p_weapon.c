@@ -849,7 +849,7 @@ void Blaster_Fire (edict_t *ent, vec3_t g_offset, int damage, qboolean hyper, in
 	gi.multicast (ent->s.origin, MULTICAST_PVS);
 
 	PlayerNoise(ent, start, PNOISE_WEAPON);
-	gi.dprintf("%s Player Position %s\n",vtos(ent->s.origin));
+	//gi.dprintf("%s Player Position %s\n",vtos(ent->s.origin));
 }
 
 void hyper_Blaster_Fire (edict_t *ent, vec3_t g_offset, int damage, qboolean hyper, int effect)
@@ -926,7 +926,7 @@ void Weapon_Blaster_Fire (edict_t *ent)
 	if (ent->client->pers.instakill == 0)
 		Blaster_Fire (ent, vec3_origin, 2, false, EF_BLASTER);
 	else
-		Blaster_Fire (ent, vec3_origin, 999, false, EF_BLASTER);
+		Blaster_Fire (ent, vec3_origin, 1999, false, EF_BLASTER);
 
 	ent->client->ps.gunframe++;
 

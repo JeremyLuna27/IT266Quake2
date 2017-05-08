@@ -1744,6 +1744,8 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 		WaveSpawn();
 	}
 	*/
+
+
 	level.current_entity = ent;
 	client = ent->client;
 

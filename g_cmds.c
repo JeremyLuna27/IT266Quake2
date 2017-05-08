@@ -25,12 +25,12 @@ int currentWave;
 int perksOn;
 
 
-void WaveSpawn()
+void WaveSpawn1()
 {
 	int x,y,z;
 	int i;
 	//edict_t *mob;
-	edict_t  *mob[16];
+	edict_t  *mob[50];
 	
 	int mon1x, mon1y, mon1z;
 	int mon2x, mon2y, mon2z;
@@ -48,6 +48,11 @@ void WaveSpawn()
 	int mon14x, mon14y, mon14z;
 	int mon15x, mon15y, mon15z;
 	int mon16x, mon16y, mon16z;
+	int mon17x, mon17y, mon17z;
+	int mon18x, mon18y, mon18z;
+	int mon19x, mon19y, mon19z;
+	int mon20x, mon20y, mon20z;
+	int mon21x, mon21y, mon21z;
 
 	currentWave++;
 	mon1x=-596;
@@ -60,11 +65,11 @@ void WaveSpawn()
 
 	mon3x= -678;
 	mon3y= -2575;
-	mon3z= 292;	
+	mon3z= 293;	
 
 	mon4x= -861;
 	mon4y= -2315;
-	mon4z= 194;
+	mon4z= 195;
 
 	mon5x= -817;
 	mon5y= -1886;
@@ -78,20 +83,71 @@ void WaveSpawn()
 	mon7y= -1809;
 	mon7z= 105;
 
+	mon8x= -1393;
+	mon8y= -1942;
+	mon8z= 105;
+
+	mon9x= -1807;
+	mon9y= -1590;
+	mon9z= 69;
+
+	mon10x= -2106;
+	mon10y= -1513;
+	mon10z= 41;
+
+	mon11x= -2097;
+	mon11y= -992;
+	mon11z= -54;
+
+	mon12x= -1917;
+	mon12y= -1513;
+	mon12z= -54;
+
+	mon13x= -2502;
+	mon13y= -617;
+	mon13z= -46;
+
+	mon14x= -2716;
+	mon14y= -298;
+	mon14z= 33;
+
+	mon15x= -1945;
+	mon15y= -1049;
+	mon15z= -54;
+
+	mon16x= -2936;
+	mon16y= 101;
+	mon16z= -14;
+
+	mon17x= -2557;
+	mon17y= -93;
+	mon17z= 32;
+
+	mon18x= -2539;
+	mon18y= 98;
+	mon18z= -14;
+
+	mon19x= -2008;
+	mon19y= -140;
+	mon19z= 73;
+
+	mon20x= -2292;
+	mon20y= -1194;
+	mon20z= 299;
+
+	mon21x= -343;
+	mon21y= -2854;
+	mon21z= 489;
+
 
 	//sizeof(mob)
-	for(i = 0;i < 7; i++)
+	for(i = 0;i < 21; i++)
 	{
 		mob[i] = G_Spawn();
 		SP_monster_soldier_ss(mob[i]);
+		//SP_monster_gladiator(mob[i]);
 		gi.linkentity(mob[i]);
 	}
-	//x=1635;
-	//x=15;
-	//y=611;
-	//y=8;
-    //z=536;
-	//z=28;
 
 	/*
 	for(i=0; i<2; i++)
@@ -136,7 +192,557 @@ void WaveSpawn()
 	mob[6]->s.origin[1]=mon7y;
 	mob[6]->s.origin[2]=mon7z;
 	gi.linkentity(mob[6]);
+
+	mob[7]->s.origin[0]=mon8x;
+	mob[7]->s.origin[1]=mon8y;
+	mob[7]->s.origin[2]=mon8z;
+	gi.linkentity(mob[7]);
+
+	mob[8]->s.origin[0]=mon9x;
+	mob[8]->s.origin[1]=mon9y;
+	mob[8]->s.origin[2]=mon9z;
+	gi.linkentity(mob[8]);
+
+	mob[9]->s.origin[0]=mon10x;
+	mob[9]->s.origin[1]=mon10y;
+	mob[9]->s.origin[2]=mon10z;
+	gi.linkentity(mob[9]);
+
+	mob[10]->s.origin[0]=mon11x;
+	mob[10]->s.origin[1]=mon11y;
+	mob[10]->s.origin[2]=mon11z;
+	gi.linkentity(mob[10]);
+
+	mob[11]->s.origin[0]=mon12x;
+	mob[11]->s.origin[1]=mon12y;
+	mob[11]->s.origin[2]=mon12z;
+	gi.linkentity(mob[11]);
+
+	mob[12]->s.origin[0]=mon13x;
+	mob[12]->s.origin[1]=mon13y;
+	mob[12]->s.origin[2]=mon13z;
+	gi.linkentity(mob[12]);
+
+	mob[13]->s.origin[0]=mon14x;
+	mob[13]->s.origin[1]=mon14y;
+	mob[13]->s.origin[2]=mon14z;
+	gi.linkentity(mob[13]);
+
+	mob[14]->s.origin[0]=mon15x;
+	mob[14]->s.origin[1]=mon15y;
+	mob[14]->s.origin[2]=mon15z;
+	gi.linkentity(mob[14]);
+
+	mob[15]->s.origin[0]=mon16x;
+	mob[15]->s.origin[1]=mon16y;
+	mob[15]->s.origin[2]=mon16z;
+	gi.linkentity(mob[15]);
+
+	mob[16]->s.origin[0]=mon17x;
+	mob[16]->s.origin[1]=mon17y;
+	mob[16]->s.origin[2]=mon17z;
+	gi.linkentity(mob[16]);
+
+	mob[17]->s.origin[0]=mon18x;
+	mob[17]->s.origin[1]=mon18y;
+	mob[17]->s.origin[2]=mon18z;
+	gi.linkentity(mob[17]);
+
+	mob[18]->s.origin[0]=mon19x;
+	mob[18]->s.origin[1]=mon19y;
+	mob[18]->s.origin[2]=mon19z;
+	gi.linkentity(mob[18]);
+
+	mob[19]->s.origin[0]=mon20x;
+	mob[19]->s.origin[1]=mon20y;
+	mob[19]->s.origin[2]=mon20z;
+	gi.linkentity(mob[19]);
+
+	mob[20]->s.origin[0]=mon21x;
+	mob[20]->s.origin[1]=mon21y;
+	mob[20]->s.origin[2]=mon21z;
+	gi.linkentity(mob[20]);
 }
+
+void WaveSpawn2()
+{
+	int x,y,z;
+	int i;
+	//edict_t *mob;
+	edict_t  *mob[50];
+	
+	int mon1x, mon1y, mon1z;
+	int mon2x, mon2y, mon2z;
+	int mon3x, mon3y, mon3z;
+	int mon4x, mon4y, mon4z;
+	int mon5x, mon5y, mon5z;
+	int mon6x, mon6y, mon6z;
+	int mon7x, mon7y, mon7z;
+	int mon8x, mon8y, mon8z;
+	int mon9x, mon9y, mon9z;
+	int mon10x, mon10y, mon10z;
+	int mon11x, mon11y, mon11z;
+	int mon12x, mon12y, mon12z;
+	int mon13x, mon13y, mon13z;
+	int mon14x, mon14y, mon14z;
+	int mon15x, mon15y, mon15z;
+	int mon16x, mon16y, mon16z;
+	int mon17x, mon17y, mon17z;
+	int mon18x, mon18y, mon18z;
+	int mon19x, mon19y, mon19z;
+	int mon20x, mon20y, mon20z;
+	int mon21x, mon21y, mon21z;
+
+	currentWave++;
+	mon1x=-596;
+	mon1y=-2425;
+	mon1z=329;
+
+	mon2x= -556;
+	mon2y= -2238;
+	mon2z= 329;
+
+	mon3x= -678;
+	mon3y= -2575;
+	mon3z= 293;	
+
+	mon4x= -861;
+	mon4y= -2315;
+	mon4z= 195;
+
+	mon5x= -817;
+	mon5y= -1886;
+	mon5z= 105;
+
+	mon6x= -805;
+	mon6y= -2579;
+	mon6z= 713;
+
+	mon7x= -547;
+	mon7y= -1809;
+	mon7z= 105;
+
+	mon8x= -1393;
+	mon8y= -1942;
+	mon8z= 105;
+
+	mon9x= -1807;
+	mon9y= -1590;
+	mon9z= 69;
+
+	mon10x= -2106;
+	mon10y= -1513;
+	mon10z= 41;
+
+	mon11x= -2097;
+	mon11y= -992;
+	mon11z= -54;
+
+	mon12x= -1917;
+	mon12y= -1513;
+	mon12z= -54;
+
+	mon13x= -2502;
+	mon13y= -617;
+	mon13z= -46;
+
+	mon14x= -2716;
+	mon14y= -298;
+	mon14z= 33;
+
+	mon15x= -1945;
+	mon15y= -1049;
+	mon15z= -54;
+
+	mon16x= -2936;
+	mon16y= 101;
+	mon16z= -14;
+
+	mon17x= -2557;
+	mon17y= -93;
+	mon17z= 32;
+
+	mon18x= -2539;
+	mon18y= 98;
+	mon18z= -14;
+
+	mon19x= -2008;
+	mon19y= -140;
+	mon19z= 73;
+
+	mon20x= -2292;
+	mon20y= -1194;
+	mon20z= 299;
+
+	mon21x= -343;
+	mon21y= -2854;
+	mon21z= 489;
+
+	//sizeof(mob)
+	for(i = 0;i < 21; i++)
+	{
+		mob[i] = G_Spawn();
+		//SP_monster_soldier_ss(mob[i]);
+		SP_monster_gladiator(mob[i]);
+		gi.linkentity(mob[i]);
+	}
+
+	/*
+	for(i=0; i<2; i++)
+	{
+		mob->s.origin[0]=x;
+		mob->s.origin[1]=y;
+		mob->s.origin[2]=z;
+		gi.linkentity(mob);
+	}
+	*/
+	mob[0]->s.origin[0]=mon1x;
+	mob[0]->s.origin[1]=mon1y;
+	mob[0]->s.origin[2]=mon1z;
+	gi.linkentity(mob[0]);
+
+	mob[1]->s.origin[0]=mon2x;
+	mob[1]->s.origin[1]=mon2y;
+	mob[1]->s.origin[2]=mon2z;
+	gi.linkentity(mob[1]);
+
+	mob[2]->s.origin[0]=mon3x;
+	mob[2]->s.origin[1]=mon3y;
+	mob[2]->s.origin[2]=mon3z;
+	gi.linkentity(mob[2]);
+
+	mob[3]->s.origin[0]=mon4x;
+	mob[3]->s.origin[1]=mon4y;
+	mob[3]->s.origin[2]=mon4z;
+	gi.linkentity(mob[3]);
+
+	mob[4]->s.origin[0]=mon5x;
+	mob[4]->s.origin[1]=mon5y;
+	mob[4]->s.origin[2]=mon5z;
+	gi.linkentity(mob[4]);
+
+	mob[5]->s.origin[0]=mon6x;
+	mob[5]->s.origin[1]=mon6y;
+	mob[5]->s.origin[2]=mon6z;
+	gi.linkentity(mob[5]);
+
+	mob[6]->s.origin[0]=mon7x;
+	mob[6]->s.origin[1]=mon7y;
+	mob[6]->s.origin[2]=mon7z;
+	gi.linkentity(mob[6]);
+
+	mob[7]->s.origin[0]=mon8x;
+	mob[7]->s.origin[1]=mon8y;
+	mob[7]->s.origin[2]=mon8z;
+	gi.linkentity(mob[7]);
+
+	mob[8]->s.origin[0]=mon9x;
+	mob[8]->s.origin[1]=mon9y;
+	mob[8]->s.origin[2]=mon9z;
+	gi.linkentity(mob[8]);
+
+	mob[9]->s.origin[0]=mon10x;
+	mob[9]->s.origin[1]=mon10y;
+	mob[9]->s.origin[2]=mon10z;
+	gi.linkentity(mob[9]);
+
+	mob[10]->s.origin[0]=mon11x;
+	mob[10]->s.origin[1]=mon11y;
+	mob[10]->s.origin[2]=mon11z;
+	gi.linkentity(mob[10]);
+
+	mob[11]->s.origin[0]=mon12x;
+	mob[11]->s.origin[1]=mon12y;
+	mob[11]->s.origin[2]=mon12z;
+	gi.linkentity(mob[11]);
+
+	mob[12]->s.origin[0]=mon13x;
+	mob[12]->s.origin[1]=mon13y;
+	mob[12]->s.origin[2]=mon13z;
+	gi.linkentity(mob[12]);
+
+	mob[13]->s.origin[0]=mon14x;
+	mob[13]->s.origin[1]=mon14y;
+	mob[13]->s.origin[2]=mon14z;
+	gi.linkentity(mob[13]);
+
+	mob[14]->s.origin[0]=mon15x;
+	mob[14]->s.origin[1]=mon15y;
+	mob[14]->s.origin[2]=mon15z;
+	gi.linkentity(mob[14]);
+
+	mob[15]->s.origin[0]=mon16x;
+	mob[15]->s.origin[1]=mon16y;
+	mob[15]->s.origin[2]=mon16z;
+	gi.linkentity(mob[15]);
+
+	mob[16]->s.origin[0]=mon17x;
+	mob[16]->s.origin[1]=mon17y;
+	mob[16]->s.origin[2]=mon17z;
+	gi.linkentity(mob[16]);
+
+	mob[17]->s.origin[0]=mon18x;
+	mob[17]->s.origin[1]=mon18y;
+	mob[17]->s.origin[2]=mon18z;
+	gi.linkentity(mob[17]);
+
+	mob[18]->s.origin[0]=mon19x;
+	mob[18]->s.origin[1]=mon19y;
+	mob[18]->s.origin[2]=mon19z;
+	gi.linkentity(mob[18]);
+
+	mob[19]->s.origin[0]=mon20x;
+	mob[19]->s.origin[1]=mon20y;
+	mob[19]->s.origin[2]=mon20z;
+	gi.linkentity(mob[19]);
+
+	mob[20]->s.origin[0]=mon21x;
+	mob[20]->s.origin[1]=mon21y;
+	mob[20]->s.origin[2]=mon21z;
+	gi.linkentity(mob[20]);
+}
+
+
+void WaveSpawn3()
+{
+	int x,y,z;
+	int i;
+	//edict_t *mob;
+	edict_t  *mob[50];
+	
+	int mon1x, mon1y, mon1z;
+	int mon2x, mon2y, mon2z;
+	int mon3x, mon3y, mon3z;
+	int mon4x, mon4y, mon4z;
+	int mon5x, mon5y, mon5z;
+	int mon6x, mon6y, mon6z;
+	int mon7x, mon7y, mon7z;
+	int mon8x, mon8y, mon8z;
+	int mon9x, mon9y, mon9z;
+	int mon10x, mon10y, mon10z;
+	int mon11x, mon11y, mon11z;
+	int mon12x, mon12y, mon12z;
+	int mon13x, mon13y, mon13z;
+	int mon14x, mon14y, mon14z;
+	int mon15x, mon15y, mon15z;
+	int mon16x, mon16y, mon16z;
+	int mon17x, mon17y, mon17z;
+	int mon18x, mon18y, mon18z;
+	int mon19x, mon19y, mon19z;
+	int mon20x, mon20y, mon20z;
+	int mon21x, mon21y, mon21z;
+
+	currentWave++;
+	mon1x=-596;
+	mon1y=-2425;
+	mon1z=329;
+
+	mon2x= -556;
+	mon2y= -2238;
+	mon2z= 329;
+
+	mon3x= -678;
+	mon3y= -2575;
+	mon3z= 293;	
+
+	mon4x= -861;
+	mon4y= -2315;
+	mon4z= 195;
+
+	mon5x= -817;
+	mon5y= -1886;
+	mon5z= 105;
+
+	mon6x= -805;
+	mon6y= -2579;
+	mon6z= 713;
+
+	mon7x= -547;
+	mon7y= -1809;
+	mon7z= 105;
+
+	mon8x= -1393;
+	mon8y= -1942;
+	mon8z= 105;
+
+	mon9x= -1807;
+	mon9y= -1590;
+	mon9z= 69;
+
+	mon10x= -2106;
+	mon10y= -1513;
+	mon10z= 41;
+
+	mon11x= -2097;
+	mon11y= -992;
+	mon11z= -54;
+
+	mon12x= -1917;
+	mon12y= -1513;
+	mon12z= -54;
+
+	mon13x= -2502;
+	mon13y= -617;
+	mon13z= -46;
+
+	mon14x= -2716;
+	mon14y= -298;
+	mon14z= 33;
+
+	mon15x= -1945;
+	mon15y= -1049;
+	mon15z= -54;
+
+	mon16x= -2936;
+	mon16y= 101;
+	mon16z= -14;
+
+	mon17x= -2557;
+	mon17y= -93;
+	mon17z= 32;
+
+	mon18x= -2539;
+	mon18y= 98;
+	mon18z= -14;
+
+	mon19x= -2008;
+	mon19y= -140;
+	mon19z= 73;
+
+	mon20x= -2292;
+	mon20y= -1194;
+	mon20z= 299;
+
+	mon21x= -343;
+	mon21y= -2854;
+	mon21z= 489;
+
+
+	//sizeof(mob)
+	for(i = 0;i < 21; i++)
+	{
+		mob[i] = G_Spawn();
+		SP_monster_tank(mob[i]);
+		//SP_monster_gladiator(mob[i]);
+		gi.linkentity(mob[i]);
+	}
+
+	/*
+	for(i=0; i<2; i++)
+	{
+		mob->s.origin[0]=x;
+		mob->s.origin[1]=y;
+		mob->s.origin[2]=z;
+		gi.linkentity(mob);
+	}
+	*/
+	mob[0]->s.origin[0]=mon1x;
+	mob[0]->s.origin[1]=mon1y;
+	mob[0]->s.origin[2]=mon1z;
+	gi.linkentity(mob[0]);
+
+	mob[1]->s.origin[0]=mon2x;
+	mob[1]->s.origin[1]=mon2y;
+	mob[1]->s.origin[2]=mon2z;
+	gi.linkentity(mob[1]);
+
+	mob[2]->s.origin[0]=mon3x;
+	mob[2]->s.origin[1]=mon3y;
+	mob[2]->s.origin[2]=mon3z;
+	gi.linkentity(mob[2]);
+
+	mob[3]->s.origin[0]=mon4x;
+	mob[3]->s.origin[1]=mon4y;
+	mob[3]->s.origin[2]=mon4z;
+	gi.linkentity(mob[3]);
+
+	mob[4]->s.origin[0]=mon5x;
+	mob[4]->s.origin[1]=mon5y;
+	mob[4]->s.origin[2]=mon5z;
+	gi.linkentity(mob[4]);
+
+	mob[5]->s.origin[0]=mon6x;
+	mob[5]->s.origin[1]=mon6y;
+	mob[5]->s.origin[2]=mon6z;
+	gi.linkentity(mob[5]);
+
+	mob[6]->s.origin[0]=mon7x;
+	mob[6]->s.origin[1]=mon7y;
+	mob[6]->s.origin[2]=mon7z;
+	gi.linkentity(mob[6]);
+
+	mob[7]->s.origin[0]=mon8x;
+	mob[7]->s.origin[1]=mon8y;
+	mob[7]->s.origin[2]=mon8z;
+	gi.linkentity(mob[7]);
+
+	mob[8]->s.origin[0]=mon9x;
+	mob[8]->s.origin[1]=mon9y;
+	mob[8]->s.origin[2]=mon9z;
+	gi.linkentity(mob[8]);
+
+	mob[9]->s.origin[0]=mon10x;
+	mob[9]->s.origin[1]=mon10y;
+	mob[9]->s.origin[2]=mon10z;
+	gi.linkentity(mob[9]);
+
+	mob[10]->s.origin[0]=mon11x;
+	mob[10]->s.origin[1]=mon11y;
+	mob[10]->s.origin[2]=mon11z;
+	gi.linkentity(mob[10]);
+
+	mob[11]->s.origin[0]=mon12x;
+	mob[11]->s.origin[1]=mon12y;
+	mob[11]->s.origin[2]=mon12z;
+	gi.linkentity(mob[11]);
+
+	mob[12]->s.origin[0]=mon13x;
+	mob[12]->s.origin[1]=mon13y;
+	mob[12]->s.origin[2]=mon13z;
+	gi.linkentity(mob[12]);
+
+	mob[13]->s.origin[0]=mon14x;
+	mob[13]->s.origin[1]=mon14y;
+	mob[13]->s.origin[2]=mon14z;
+	gi.linkentity(mob[13]);
+
+	mob[14]->s.origin[0]=mon15x;
+	mob[14]->s.origin[1]=mon15y;
+	mob[14]->s.origin[2]=mon15z;
+	gi.linkentity(mob[14]);
+
+	mob[15]->s.origin[0]=mon16x;
+	mob[15]->s.origin[1]=mon16y;
+	mob[15]->s.origin[2]=mon16z;
+	gi.linkentity(mob[15]);
+
+	mob[16]->s.origin[0]=mon17x;
+	mob[16]->s.origin[1]=mon17y;
+	mob[16]->s.origin[2]=mon17z;
+	gi.linkentity(mob[16]);
+
+	mob[17]->s.origin[0]=mon18x;
+	mob[17]->s.origin[1]=mon18y;
+	mob[17]->s.origin[2]=mon18z;
+	gi.linkentity(mob[17]);
+
+	mob[18]->s.origin[0]=mon19x;
+	mob[18]->s.origin[1]=mon19y;
+	mob[18]->s.origin[2]=mon19z;
+	gi.linkentity(mob[18]);
+
+	mob[19]->s.origin[0]=mon20x;
+	mob[19]->s.origin[1]=mon20y;
+	mob[19]->s.origin[2]=mon20z;
+	gi.linkentity(mob[19]);
+
+	mob[20]->s.origin[0]=mon21x;
+	mob[20]->s.origin[1]=mon21y;
+	mob[20]->s.origin[2]=mon21z;
+	gi.linkentity(mob[20]);
+}
+
+
 
 char *ClientTeam (edict_t *ent)
 {
@@ -1232,7 +1838,17 @@ void ClientCommand (edict_t *ent)
 		Cmd_Regen_f (ent);
 	else if (Q_stricmp (cmd, "wave1") == 0)
 	{
-		WaveSpawn();
+		WaveSpawn1();
+		gi.centerprintf(ent,"ZOMBIES SPAWNED!");
+	}
+	else if (Q_stricmp (cmd, "wave2") == 0)
+	{
+		WaveSpawn2();
+		gi.centerprintf(ent,"ZOMBIES SPAWNED!");
+	}
+	else if (Q_stricmp (cmd, "wave3") == 0)
+	{
+		WaveSpawn3();
 		gi.centerprintf(ent,"ZOMBIES SPAWNED!");
 	}
 	/*else if (Q_stricmp (cmd, "superspeed off") == 0)
